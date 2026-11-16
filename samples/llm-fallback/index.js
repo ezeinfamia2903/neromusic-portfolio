@@ -8,6 +8,15 @@
  * }} Provider
  */
 
+/**
+ * @typedef {{
+ *   provider: string,
+ *   attempt: number,
+ *   ok: boolean,
+ *   error: unknown | undefined
+ * }} ProviderAttempt
+ */
+
 class ProviderTimeoutError extends Error {
   /**
    * @param {string} providerName
@@ -160,6 +169,7 @@ function callWithTimeout(provider, input, timeoutMs, parentSignal) {
  *   timeoutMs?: number,
  *   retries?: number,
  *   baseDelayMs?: number,
+ *   onAttempt?: (result: ProviderAttempt) => void,
  *   wait?: (ms: number, signal?: AbortSignal) => Promise<void>
  * }} options
  */
@@ -168,10 +178,14 @@ function createFallbackClient({
   timeoutMs = 2_000,
   retries = 1,
   baseDelayMs = 100,
+  onAttempt,
   wait: waitForRetry = wait,
 }) {
   if (!Array.isArray(providers)) {
     throw new TypeError('providers must be an array');
+  }
+  if (providers.length === 0) {
+    throw new RangeError('providers must contain at least one provider');
   }
   if (
     !Number.isInteger(timeoutMs) ||
@@ -201,6 +215,9 @@ function createFallbackClient({
   if (typeof waitForRetry !== 'function') {
     throw new TypeError('wait must be a function');
   }
+  if (onAttempt !== undefined && typeof onAttempt !== 'function') {
+    throw new TypeError('onAttempt must be a function');
+  }
 
   return {
     /**
@@ -226,17 +243,33 @@ function createFallbackClient({
 
         for (let attempt = 1; attempt <= totalAttempts; attempt += 1) {
           throwIfAborted(signal);
+          /** @type {string} */
+          let result;
           try {
-            return await callWithTimeout(provider, input, timeoutMs, signal);
+            result = await callWithTimeout(provider, input, timeoutMs, signal);
           } catch (error) {
             if (error instanceof OperationAbortedError) {
               throw error;
             }
             lastError = error;
+            onAttempt?.({
+              provider: provider.name,
+              attempt,
+              ok: false,
+              error,
+            });
             if (attempt < totalAttempts) {
               await waitForRetry(baseDelayMs * 2 ** (attempt - 1), signal);
             }
+            continue;
           }
+          onAttempt?.({
+            provider: provider.name,
+            attempt,
+            ok: true,
+            error: undefined,
+          });
+          return result;
         }
 
         failures.push(

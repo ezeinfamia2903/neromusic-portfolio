@@ -12,6 +12,8 @@ const {
 } = require('./index');
 
 test('uses the next provider when the first one fails', async () => {
+  /** @type {Array<{ provider: string, attempt: number, ok: boolean, error: unknown }>} */
+  const attempts = [];
   const client = createFallbackClient({
     providers: [
       {
@@ -28,9 +30,24 @@ test('uses the next provider when the first one fails', async () => {
       },
     ],
     retries: 0,
+    onAttempt(result) {
+      attempts.push(result);
+    },
   });
 
   assert.equal(await client.generate('request'), 'accepted');
+  assert.deepEqual(
+    attempts.map(({ provider, attempt, ok, error }) => ({
+      provider,
+      attempt,
+      ok,
+      hasError: error instanceof Error,
+    })),
+    [
+      { provider: 'down', attempt: 1, ok: false, hasError: true },
+      { provider: 'ready', attempt: 1, ok: true, hasError: false },
+    ],
+  );
 });
 
 test('retries a provider with exponential delays before succeeding', async () => {
@@ -154,7 +171,18 @@ test('stops immediately when the caller aborts', async () => {
 
 test('rejects invalid provider configuration', () => {
   assert.throws(
-    () => createFallbackClient({ providers: [], retries: -1 }),
+    () =>
+      createFallbackClient({
+        providers: [
+          {
+            name: 'valid',
+            async generate() {
+              return 'ok';
+            },
+          },
+        ],
+        retries: -1,
+      }),
     RangeError,
   );
   assert.throws(
@@ -176,5 +204,14 @@ test('rejects invalid provider configuration', () => {
         ],
       }),
     TypeError,
+  );
+});
+
+test('rejects an empty provider list with a range error', () => {
+  assert.throws(
+    () => createFallbackClient({ providers: [] }),
+    (error) =>
+      error instanceof RangeError &&
+      error.message === 'providers must contain at least one provider',
   );
 });

@@ -35,10 +35,29 @@ async function main() {
   });
 
   try {
-    const result = await reconciler.reconcileOnce();
-    console.log(
-      JSON.stringify({ result, applied: [...applied.values()] }, null, 2),
-    );
+    /** @param {string} label */
+    const showPass = async (label) => {
+      const result = await reconciler.reconcileOnce();
+      console.log(
+        JSON.stringify(
+          { pass: label, result, applied: [...applied.values()] },
+          null,
+          2,
+        ),
+      );
+    };
+
+    await showPass('1. create desired resource');
+    setDesiredResource(db, {
+      id: 'reporting-worker',
+      config: { region: 'demo', capacity: 4 },
+    });
+    await showPass('2. update configuration');
+    setDesiredResource(db, {
+      id: 'reporting-worker',
+      enabled: false,
+    });
+    await showPass('3. remove disabled resource');
   } finally {
     db.close();
   }

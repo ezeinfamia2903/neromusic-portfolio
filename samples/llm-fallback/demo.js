@@ -19,6 +19,15 @@ const client = createFallbackClient({
     },
   ],
   retries: 0,
+  onAttempt({ provider, ok, error }) {
+    if (ok) {
+      console.log(`${provider} responded`);
+    } else {
+      console.log(
+        `${provider} failed: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  },
 });
 
 client

@@ -50,7 +50,7 @@ function openDatabase(filename = ':memory:') {
 }
 
 /**
- * Apply each unapplied migration in its own transaction.
+ * Apply all unapplied migrations atomically under an immediate write lock.
  *
  * @param {import('better-sqlite3').Database} db
  * @param {Migration[]} [migrations]
@@ -96,37 +96,37 @@ function applyMigrations(
     )
   `);
 
-  const appliedRows = /** @type {Array<{ version: number }>} */ (
-    db.prepare('SELECT version FROM schema_migrations').all()
-  );
-  const appliedVersions = new Set(appliedRows.map((row) => row.version));
-  const unknownVersion = [...appliedVersions].find(
-    (version) => !versions.has(version),
-  );
-  if (unknownVersion !== undefined) {
-    throw new Error(
-      `Database contains unregistered migration version ${unknownVersion}`,
-    );
-  }
-
-  /** @type {number[]} */
-  const appliedNow = [];
   const recordMigration = db.prepare(`
     INSERT INTO schema_migrations (version, name, applied_at)
     VALUES (?, ?, ?)
   `);
 
-  for (const migration of ordered) {
-    if (appliedVersions.has(migration.version)) continue;
-    db.transaction(() => {
-      migration.up(db);
-      recordMigration.run(migration.version, migration.name, timestamp());
-    }).immediate();
-    appliedVersions.add(migration.version);
-    appliedNow.push(migration.version);
-  }
+  return db
+    .transaction(() => {
+      const appliedRows = /** @type {Array<{ version: number }>} */ (
+        db.prepare('SELECT version FROM schema_migrations').all()
+      );
+      const appliedVersions = new Set(appliedRows.map((row) => row.version));
+      const unknownVersion = [...appliedVersions].find(
+        (version) => !versions.has(version),
+      );
+      if (unknownVersion !== undefined) {
+        throw new Error(
+          `Database contains unregistered migration version ${unknownVersion}`,
+        );
+      }
 
-  return appliedNow;
+      /** @type {number[]} */
+      const appliedNow = [];
+      for (const migration of ordered) {
+        if (appliedVersions.has(migration.version)) continue;
+        migration.up(db);
+        recordMigration.run(migration.version, migration.name, timestamp());
+        appliedNow.push(migration.version);
+      }
+      return appliedNow;
+    })
+    .immediate();
 }
 
 module.exports = {

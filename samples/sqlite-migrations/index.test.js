@@ -6,6 +6,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
+const { Worker } = require('node:worker_threads');
 const { applyMigrations, openDatabase } = require('./index');
 
 test('applies registered migrations once and records their versions', () => {
@@ -43,6 +44,72 @@ test('uses WAL for file-backed databases', (t) => {
     assert.equal(db.pragma('foreign_keys', { simple: true }), 1);
   } finally {
     db.close();
+  }
+});
+
+test('serializes migrations from two connections to the same file', async (t) => {
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'showcase-race-'));
+  const filename = path.join(directory, 'shared.sqlite');
+  t.after(() => fs.rmSync(directory, { recursive: true, force: true }));
+  const initializer = openDatabase(filename);
+  initializer.close();
+
+  const workerSource = `
+    const { parentPort, workerData } = require('node:worker_threads');
+    const { applyMigrations, openDatabase } = require(workerData.modulePath);
+    const db = openDatabase(workerData.filename);
+    parentPort.postMessage({ ready: true });
+    parentPort.once('message', () => {
+      try {
+        parentPort.postMessage({ applied: applyMigrations(db) });
+      } catch (error) {
+        parentPort.postMessage({ error: error.message });
+      } finally {
+        db.close();
+      }
+    });
+  `;
+  const runners = Array.from({ length: 2 }, () => {
+    const worker = new Worker(workerSource, {
+      eval: true,
+      workerData: { filename, modulePath: require.resolve('./index') },
+    });
+    let markReady = () => {};
+    /** @type {(value: number[]) => void} */
+    let resolveApplied = () => {};
+    /** @type {(reason: Error) => void} */
+    let rejectApplied = () => {};
+    const ready = new Promise((resolve) => {
+      markReady = () => resolve(undefined);
+    });
+    const applied = new Promise((resolve, reject) => {
+      resolveApplied = resolve;
+      rejectApplied = reject;
+    });
+    worker.on('message', (message) => {
+      if (message.ready) {
+        markReady();
+      } else if (message.error) {
+        rejectApplied(new Error(message.error));
+      } else {
+        resolveApplied(message.applied);
+      }
+    });
+    worker.once('error', rejectApplied);
+    return { worker, ready, applied };
+  });
+
+  try {
+    await Promise.all(runners.map((runner) => runner.ready));
+    for (const runner of runners) runner.worker.postMessage('start');
+    const results = await Promise.all(runners.map((runner) => runner.applied));
+    assert.deepEqual(
+      results.flat().sort((left, right) => left - right),
+      [1, 2],
+    );
+    assert.deepEqual(results.filter((result) => result.length === 0).length, 1);
+  } finally {
+    await Promise.all(runners.map((runner) => runner.worker.terminate()));
   }
 });
 
