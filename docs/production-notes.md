@@ -28,6 +28,7 @@ The product was validated with manual functional tests in real rooms. This showc
 
 The deployment notes records Windows-side checks and explicitly notes that a full Ubuntu startup was not verified in that guide. The project owner reports Ubuntu VPS operation; detailed measurements and deployment dates should be added only when independently confirmed.
 
+
 ## Production data to add
 
 - Concurrent rooms, customers, and users: [COMPLETAR: verified counts and measurement window].
