@@ -29,6 +29,8 @@ flowchart LR
     D --> I
 ```
 
+Para ver el [mapa de módulos](docs/architecture.md#module-map), el [mapa de comunicación](docs/architecture.md#communication-map), el [modelo de datos](docs/architecture.md#data-model-overview), los [procesos y el despliegue](docs/architecture.md#processes-and-deployment), el [manejo de fallas](docs/architecture.md#failure-handling) y la [hoja de ruta](docs/architecture.md#roadmap-and-next-steps), consultá las notas de arquitectura.
+
 ## Funcionalidades principales
 
 - Gestión multi-sala y multi-cliente.

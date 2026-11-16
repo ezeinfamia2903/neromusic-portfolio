@@ -29,6 +29,8 @@ flowchart LR
     D --> I
 ```
 
+For the detailed [module map](docs/architecture.md#module-map), [communication map](docs/architecture.md#communication-map), [data model](docs/architecture.md#data-model-overview), [processes and deployment](docs/architecture.md#processes-and-deployment), [failure handling](docs/architecture.md#failure-handling), and [roadmap](docs/architecture.md#roadmap-and-next-steps), see the architecture notes.
+
 ## Key features
 
 - Multi-room, multi-client lifecycle management.
