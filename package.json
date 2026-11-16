@@ -1,0 +1,26 @@
+{
+  "name": "neromusic-showcase",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Public engineering showcase and generic Node.js samples",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test samples/**/*.test.js",
+    "demo": "node samples/llm-fallback/demo.js && node samples/state-reconciler/demo.js && node samples/sqlite-migrations/demo.js",
+    "lint": "eslint samples",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.10.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "eslint": "^9.39.1",
+    "globals": "^16.5.0",
+    "prettier": "^3.6.2"
+  }
+}
