@@ -116,7 +116,9 @@ function callWithTimeout(provider, input, timeoutMs, parentSignal) {
   throwIfAborted(parentSignal);
 
   const controller = new AbortController();
+  /** @type {ReturnType<typeof setTimeout>} */
   let timer;
+  /** @type {(() => void) | undefined} */
   let onAbort;
 
   const timeout = new Promise((_, reject) => {
@@ -146,7 +148,7 @@ function callWithTimeout(provider, input, timeoutMs, parentSignal) {
     })
     .finally(() => {
       clearTimeout(timer);
-      parentSignal?.removeEventListener('abort', onAbort);
+      if (onAbort) parentSignal?.removeEventListener('abort', onAbort);
     });
 }
 

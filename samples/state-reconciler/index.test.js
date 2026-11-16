@@ -11,25 +11,29 @@ const {
 } = require('./index');
 
 /**
- * @param {Record<string, unknown>[]} [initial]
+ * @typedef {{ id: string, config: Record<string, unknown> }} TestResource
+ */
+
+/**
+ * @param {TestResource[]} [initial]
  */
 function setup(initial = []) {
   const db = new Database(':memory:');
   createDesiredResourceStore(db);
-  /** @type {Map<string, { id: string, config: Record<string, unknown> }>} */
-  const applied = new Map(
-    initial.map((resource) => [
-      resource.id,
-      { id: resource.id, config: resource.config },
-    ]),
+  /** @type {Array<[string, TestResource]>} */
+  const entries = /** @type {Array<[string, TestResource]>} */ (
+    initial.map((resource) => [resource.id, resource])
   );
+  const applied = new Map(entries);
   const adapter = {
     async list() {
       return [...applied.values()];
     },
+    /** @param {TestResource} resource */
     async apply(resource) {
       applied.set(resource.id, { id: resource.id, config: resource.config });
     },
+    /** @param {string} id */
     async remove(id) {
       applied.delete(id);
     },
@@ -56,7 +60,29 @@ test('creates desired resources and updates changed configuration', async () => 
       removed: [],
       failures: [],
     });
-    assert.deepEqual(applied.get('alpha').config, { size: 4 });
+    assert.deepEqual(applied.get('alpha')?.config, { size: 4 });
+  } finally {
+    db.close();
+  }
+});
+
+test('does not reapply equivalent nested configuration with different key order', async () => {
+  const { db, adapter } = setup([
+    { id: 'stable', config: { nested: { first: 1, second: 2 } } },
+  ]);
+  try {
+    setDesiredResource(db, {
+      id: 'stable',
+      config: { nested: { second: 2, first: 1 } },
+    });
+    const reconciler = createReconciler({ db, adapter });
+
+    assert.deepEqual(await reconciler.reconcileOnce(), {
+      created: [],
+      updated: [],
+      removed: [],
+      failures: [],
+    });
   } finally {
     db.close();
   }

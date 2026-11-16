@@ -96,12 +96,10 @@ function applyMigrations(
     )
   `);
 
-  const appliedVersions = new Set(
-    db
-      .prepare('SELECT version FROM schema_migrations')
-      .all()
-      .map((row) => row.version),
+  const appliedRows = /** @type {Array<{ version: number }>} */ (
+    db.prepare('SELECT version FROM schema_migrations').all()
   );
+  const appliedVersions = new Set(appliedRows.map((row) => row.version));
   const unknownVersion = [...appliedVersions].find(
     (version) => !versions.has(version),
   );

@@ -108,21 +108,24 @@ function setDesiredResource(
  * @returns {DesiredResource[]}
  */
 function readDesiredResources(db, now) {
-  return db
-    .prepare(
-      `
+  const rows =
+    /** @type {Array<{ id: string, expires_at: number | null, config: string }>} */ (
+      db
+        .prepare(
+          `
     SELECT id, expires_at, config
     FROM desired_resources
     WHERE enabled = 1 AND (expires_at IS NULL OR expires_at > ?)
     ORDER BY id
   `,
-    )
-    .all(now)
-    .map((row) => ({
-      id: row.id,
-      config: JSON.parse(row.config),
-      expiresAt: row.expires_at,
-    }));
+        )
+        .all(now)
+    );
+  return rows.map((row) => ({
+    id: row.id,
+    config: JSON.parse(row.config),
+    expiresAt: row.expires_at,
+  }));
 }
 
 /**
@@ -306,6 +309,7 @@ function createReconciler({
     }
 
     let stopped = false;
+    /** @type {ReturnType<typeof setTimeout> | undefined} */
     let timer;
     const schedule = () => {
       if (!stopped) timer = setTimeout(tick, intervalMs);

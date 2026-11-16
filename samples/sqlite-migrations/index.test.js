@@ -13,21 +13,21 @@ test('applies registered migrations once and records their versions', () => {
   try {
     assert.deepEqual(applyMigrations(db), [1, 2]);
     assert.deepEqual(applyMigrations(db), []);
+    const versions = /** @type {Array<{ version: number }>} */ (
+      db.prepare('SELECT version FROM schema_migrations ORDER BY version').all()
+    );
     assert.deepEqual(
-      db
-        .prepare('SELECT version FROM schema_migrations ORDER BY version')
-        .all()
-        .map((row) => row.version),
+      versions.map((row) => row.version),
       [1, 2],
     );
-    assert.equal(
+    const index = /** @type {{ name: string } | undefined} */ (
       db
         .prepare(
           "SELECT name FROM sqlite_master WHERE type = 'index' AND name = ?",
         )
-        .get('idx_settings_value').name,
-      'idx_settings_value',
+        .get('idx_settings_value')
     );
+    assert.equal(index?.name, 'idx_settings_value');
   } finally {
     db.close();
   }
@@ -63,18 +63,18 @@ test('rolls back a failed migration without recording its version', () => {
         ]),
       /simulated migration failure/,
     );
-    assert.equal(
+    const table = /** @type {{ name: string } | undefined} */ (
       db
         .prepare(
           "SELECT name FROM sqlite_master WHERE type = 'table' AND name = ?",
         )
-        .get('temporary_data'),
-      undefined,
+        .get('temporary_data')
     );
-    assert.equal(
-      db.prepare('SELECT COUNT(*) AS count FROM schema_migrations').get().count,
-      0,
+    assert.equal(table, undefined);
+    const migrationCount = /** @type {{ count: number }} */ (
+      db.prepare('SELECT COUNT(*) AS count FROM schema_migrations').get()
     );
+    assert.equal(migrationCount.count, 0);
   } finally {
     db.close();
   }
