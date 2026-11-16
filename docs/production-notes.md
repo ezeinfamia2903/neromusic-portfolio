@@ -2,14 +2,14 @@
 
 ## Deployment model
 
-The project owner reports operating NeroMusic on an Ubuntu VPS and also running the same codebase on Windows. The source documents an Ubuntu deployment managed by `systemd`. A reverse proxy publishes the audio service through either Caddy or Cloudflare Tunnel; these are alternatives, not a requirement to run both.
+The project owner reports operating NeroMusic 24/7 on an Ubuntu VPS and also running the same codebase on Windows. The source documents an Ubuntu deployment managed by `systemd`. A reverse proxy publishes the audio service through either Caddy or Cloudflare Tunnel; these are alternatives, not a requirement to run both.
 
 The audio service, operational metrics, and admin panel are separate runtime interfaces. The panel and metrics are configured for local access by default. Hosted deployments should keep them private and publish only the HTTPS audio path required by the product.
 
 ## Operations and observability
 
 - Structured event logs report startup, room lifecycle, playback, and connection state.
-- The main process periodically checks the audio service health endpoint and can restart the audio process if it becomes unhealthy.
+- The main process periodically checks the audio service health endpoint and attempts recovery after health failures.
 - Local metrics report streaming state and process/cache counters.
 - The room manager periodically reconciles persisted client settings with active room connections, including retries and expiration handling.
 - Graceful shutdown closes room connections and stops owned services.

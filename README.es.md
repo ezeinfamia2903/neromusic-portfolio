@@ -1,6 +1,6 @@
 # NeroMusic
 
-NeroMusic es un servicio privado de música multi-cliente para salas de IMVU, con reproducción independiente por sala, administración e IA conversacional opcional bilingüe. [![CI](https://github.com/YOUR_GITHUB_HANDLE/neromusic-showcase/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_GITHUB_HANDLE/neromusic-showcase/actions/workflows/ci.yml) · [Video de demostración](<COMPLETAR: URL del video>)
+NeroMusic es un servicio privado de música multi-cliente para salas de IMVU, con reproducción independiente por sala, administración e IA conversacional opcional bilingüe. [![CI](https://github.com/COMPLETAR-GITHUB-HANDLE/neromusic-showcase/actions/workflows/ci.yml/badge.svg)](https://github.com/COMPLETAR-GITHUB-HANDLE/neromusic-showcase/actions/workflows/ci.yml) · [Video de demostración](<COMPLETAR: URL del video>)
 
 ## Qué hace
 
@@ -45,11 +45,11 @@ flowchart LR
 - Pipeline de audio: la entrada de `yt-dlp` se convierte a MP3 mediante `ffmpeg` y se sirve por HTTP.
 - Una reconciliación periódica compara los clientes deseados en SQLite con las salas activas y gestiona altas, bajas, reintentos y vencimientos.
 - La IA es opcional y se puede desactivar por separado; los comandos de música no dependen de proveedores de IA.
-- Logs estructurados por evento y una verificación de salud permiten que el proceso principal detecte y reinicie un servicio de audio no saludable.
+- Logs estructurados por evento y una verificación de salud permiten que el proceso principal detecte fallos del servicio de audio e intente recuperarlo.
 
 ## En producción
 
-- Entornos de ejecución: VPS Ubuntu y Windows, según el responsable del proyecto.
+- Operación informada: servicio 24/7 en un VPS Ubuntu y la misma base de código también en Windows.
 - Opciones de despliegue documentadas para Ubuntu: `systemd` con Caddy o Cloudflare Tunnel para publicar el acceso HTTPS al audio.
 - Salas, clientes y usuarios simultáneos: [COMPLETAR: cantidades de producción verificadas].
 - Fecha de inicio en producción: [COMPLETAR: fecha].

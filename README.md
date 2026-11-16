@@ -1,6 +1,6 @@
 # NeroMusic
 
-NeroMusic is a private, multi-tenant music service for IMVU rooms, with per-room playback, administration, and optional bilingual conversation. [![CI](https://github.com/YOUR_GITHUB_HANDLE/neromusic-showcase/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_GITHUB_HANDLE/neromusic-showcase/actions/workflows/ci.yml) · [Demo video](<COMPLETAR: demo video URL>)
+NeroMusic is a private, multi-tenant music service for IMVU rooms, with per-room playback, administration, and optional bilingual conversation. [![CI](https://github.com/COMPLETAR-GITHUB-HANDLE/neromusic-showcase/actions/workflows/ci.yml/badge.svg)](https://github.com/COMPLETAR-GITHUB-HANDLE/neromusic-showcase/actions/workflows/ci.yml) · [Demo video](<COMPLETAR: demo video URL>)
 
 ## What it does
 
@@ -45,11 +45,11 @@ flowchart LR
 - Audio pipeline: `yt-dlp` input is converted by `ffmpeg` to MP3 and served over HTTP.
 - Periodic reconciliation compares desired room clients in SQLite with active rooms, handling additions, removals, retries, and expirations.
 - AI is optional and can be disabled independently; music commands do not depend on an AI provider.
-- Structured event logging and a health check allow the main process to detect and restart an unhealthy audio service.
+- Structured event logging and a health check allow the main process to detect audio-service failures and attempt recovery.
 
 ## In production
 
-- Runtime environments: Ubuntu VPS and Windows, according to the project owner.
+- Reported operation: 24/7 on an Ubuntu VPS, with the same codebase also running on Windows.
 - Deployment options documented for Ubuntu: `systemd` with either Caddy or Cloudflare Tunnel for public HTTPS audio access.
 - Concurrent rooms, customers, and users: [COMPLETAR: verified production counts].
 - Production start date: [COMPLETAR: date].
