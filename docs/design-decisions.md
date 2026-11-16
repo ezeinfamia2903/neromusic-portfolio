@@ -1,6 +1,6 @@
 # Design decisions
 
-These decisions describe the product at a level appropriate for a public portfolio. They intentionally omit proprietary implementation details.
+Key design decisions and the alternatives considered.
 
 | Decision                                                                           | Rationale                                                                                                                                      | Alternative considered                                                                                            |
 | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |

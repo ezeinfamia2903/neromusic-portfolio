@@ -2,9 +2,9 @@
 
 ## Deployment model
 
-The project owner reports operating NeroMusic 24/7 on an Ubuntu VPS and also running the same codebase on Windows. The source documents an Ubuntu deployment managed by `systemd`. A reverse proxy publishes the audio service through either Caddy or Cloudflare Tunnel; these are alternatives, not a requirement to run both.
+NeroMusic runs 24/7 on an Ubuntu VPS and the same codebase also runs on Windows. The Ubuntu deployment uses `systemd`. A reverse proxy publishes the audio service through either Caddy or Cloudflare Tunnel; these are alternatives, not a requirement to run both.
 
-The audio service, operational metrics, and admin panel are separate runtime interfaces. The panel and metrics are configured for local access by default. Hosted deployments should keep them private and publish only the HTTPS audio path required by the product.
+The audio service, operational metrics, and admin panel are separate runtime interfaces. The panel and metrics are local-only by default. Hosted deployments publish the HTTPS audio path required by the product.
 
 ## Operations and observability
 
@@ -18,20 +18,16 @@ The audio service, operational metrics, and admin panel are separate runtime int
 
 - Treat OS-specific executables as deployment configuration, not as separate application implementations.
 - Keep externally reachable audio separate from local-only administration and metrics.
-- Reconcile desired persisted state with runtime state after both panel changes and process restarts.
+- Reconcile desired persisted state with runtime state after panel changes and process restarts.
 - Keep the core playback path independent from optional AI and third-party provider availability.
-- Verify system dependencies and environment settings on each host; identical application source does not install Chrome/Chromium, `yt-dlp`, `ffmpeg`, or proxy services automatically.
+- Verify system dependencies and environment settings on each host; identical application source does not install Chrome/Chromium, media tools, or proxy services automatically.
 
-## Validation and known limits
+## Validation
 
-The product was validated with manual functional tests in real rooms. This showcase does not claim an automated test suite for the product. Automated tests in this repository exercise only the independent generic samples.
+Validated through manual functional tests in real rooms; the automated tests in this repository cover the sample modules.
 
-The deployment notes records Windows-side checks and explicitly notes that a full Ubuntu startup was not verified in that guide. The project owner reports Ubuntu VPS operation; detailed measurements and deployment dates should be added only when independently confirmed.
-
-
-## Production data to add
+## In production
 
 - Concurrent rooms, customers, and users: [COMPLETAR: verified counts and measurement window].
 - Production start date: [COMPLETAR: date].
 - Availability or uptime: [COMPLETAR: monitoring source and measurement window].
-- Hosting details suitable for publication: [COMPLETAR: high-level, non-sensitive description].

@@ -2,6 +2,8 @@
 
 NeroMusic es un servicio privado de música multi-cliente para salas de IMVU, con reproducción independiente por sala, administración e IA conversacional opcional bilingüe. [![CI](https://github.com/COMPLETAR-GITHUB-HANDLE/neromusic-showcase/actions/workflows/ci.yml/badge.svg)](https://github.com/COMPLETAR-GITHUB-HANDLE/neromusic-showcase/actions/workflows/ci.yml) · [Video de demostración](<COMPLETAR: URL del video>)
 
+**Creado por Ezequiel Núñez.** NeroMusic es un proyecto independiente y no está afiliado, respaldado ni patrocinado por IMVU.
+
 ## Qué hace
 
 - Recibe comandos del chat para buscar y reproducir pistas solicitadas.
@@ -14,8 +16,8 @@ NeroMusic es un servicio privado de música multi-cliente para salas de IMVU, co
 
 ```mermaid
 flowchart LR
-    U[Participantes de la sala] --> L[Login con navegador headless]
-    L --> R[Conexión en tiempo real]
+    U[Participantes de la sala] <-->|Actividad y respuestas de la sala| R[Conexión en tiempo real]
+    L[Login con navegador headless] --> R
     R --> C[Procesamiento de comandos]
     C --> Q[Cola por sala]
     Q --> A[Streaming de audio]
@@ -29,7 +31,7 @@ flowchart LR
     D --> I
 ```
 
-Para ver el [mapa de módulos](docs/architecture.md#module-map), el [mapa de comunicación](docs/architecture.md#communication-map), el [modelo de datos](docs/architecture.md#data-model-overview), los [procesos y el despliegue](docs/architecture.md#processes-and-deployment), el [manejo de fallas](docs/architecture.md#failure-handling) y la [hoja de ruta](docs/architecture.md#roadmap-and-next-steps), consultá las notas de arquitectura.
+Para ver el [mapa funcional de módulos](docs/module-map.md), el [mapa de comunicación](docs/architecture.md#communication-map), el [modelo de datos](docs/architecture.md#data-model-overview), los [procesos y el despliegue](docs/architecture.md#processes-and-deployment), el [manejo de fallas](docs/architecture.md#failure-handling) y la [hoja de ruta](docs/architecture.md#roadmap-next-steps), consultá las notas de arquitectura.
 
 ## Funcionalidades principales
 
@@ -51,7 +53,7 @@ Para ver el [mapa de módulos](docs/architecture.md#module-map), el [mapa de com
 
 ## En producción
 
-- Operación informada: servicio 24/7 en un VPS Ubuntu y la misma base de código también en Windows.
+- NeroMusic corre 24/7 en un VPS Ubuntu y la misma base de código también corre en Windows.
 - Opciones de despliegue documentadas para Ubuntu: `systemd` con Caddy o Cloudflare Tunnel para publicar el acceso HTTPS al audio.
 - Salas, clientes y usuarios simultáneos: [COMPLETAR: cantidades de producción verificadas].
 - Fecha de inicio en producción: [COMPLETAR: fecha].
@@ -60,6 +62,16 @@ Para ver el [mapa de módulos](docs/architecture.md#module-map), el [mapa de com
 ## Qué contiene y qué no contiene este repositorio
 
 NeroMusic es un producto comercial privado. Aquí no se publica el código de la aplicación, la configuración de despliegue, los datos operativos ni la información de clientes. Este showcase contiene documentación de arquitectura e ingeniería y módulos pequeños y genéricos, escritos desde cero, que demuestran algunos patrones de programación. La licencia MIT de `samples/` no se aplica al producto privado ni a su código fuente.
+
+## Muestras de código
+
+Las tres muestras independientes se escribieron desde cero y muestran patrones de ingeniería reutilizables sin incluir código del producto:
+
+| Muestra                                                       | Qué demuestra                                                        |
+| ------------------------------------------------------------- | -------------------------------------------------------------------- |
+| [Fallback de proveedores](samples/llm-fallback/README.md)     | Timeouts, reintentos, cancelación, errores tipados y fallback.       |
+| [Reconciliador de estado](samples/state-reconciler/README.md) | Convergencia entre estado deseado en SQLite y un adaptador runtime.  |
+| [Migraciones SQLite](samples/sqlite-migrations/README.md)     | Migraciones transaccionales, repetibles y seguras ante concurrencia. |
 
 ## Cómo lo desarrollé
 

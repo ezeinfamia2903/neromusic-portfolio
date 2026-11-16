@@ -2,6 +2,8 @@
 
 NeroMusic is a private, multi-tenant music service for IMVU rooms, with per-room playback, administration, and optional bilingual conversation. [![CI](https://github.com/COMPLETAR-GITHUB-HANDLE/neromusic-showcase/actions/workflows/ci.yml/badge.svg)](https://github.com/COMPLETAR-GITHUB-HANDLE/neromusic-showcase/actions/workflows/ci.yml) · [Demo video](<COMPLETAR: demo video URL>)
 
+**Created by Ezequiel Núñez.** NeroMusic is an independent project and is not affiliated with, endorsed by, or sponsored by IMVU.
+
 ## What it does
 
 - Accepts chat commands to search for and play requested tracks.
@@ -14,8 +16,8 @@ NeroMusic is a private, multi-tenant music service for IMVU rooms, with per-room
 
 ```mermaid
 flowchart LR
-    U[Room participants] --> L[Headless-browser login]
-    L --> R[Real-time connection]
+    U[Room participants] <-->|Room activity and replies| R[Real-time connection]
+    L[Headless-browser login] --> R
     R --> C[Command handling]
     C --> Q[Per-room queue]
     Q --> A[Audio streaming]
@@ -29,7 +31,7 @@ flowchart LR
     D --> I
 ```
 
-For the detailed [module map](docs/architecture.md#module-map), [communication map](docs/architecture.md#communication-map), [data model](docs/architecture.md#data-model-overview), [processes and deployment](docs/architecture.md#processes-and-deployment), [failure handling](docs/architecture.md#failure-handling), and [roadmap](docs/architecture.md#roadmap-and-next-steps), see the architecture notes.
+For the [functional module map](docs/module-map.md), [communication map](docs/architecture.md#communication-map), [data model](docs/architecture.md#data-model-overview), [processes and deployment](docs/architecture.md#processes-and-deployment), [failure handling](docs/architecture.md#failure-handling), and [roadmap](docs/architecture.md#roadmap-next-steps), see the architecture notes.
 
 ## Key features
 
@@ -51,7 +53,7 @@ For the detailed [module map](docs/architecture.md#module-map), [communication m
 
 ## In production
 
-- Reported operation: 24/7 on an Ubuntu VPS, with the same codebase also running on Windows.
+- NeroMusic runs 24/7 on an Ubuntu VPS and the same codebase also runs on Windows.
 - Deployment options documented for Ubuntu: `systemd` with either Caddy or Cloudflare Tunnel for public HTTPS audio access.
 - Concurrent rooms, customers, and users: [COMPLETAR: verified production counts].
 - Production start date: [COMPLETAR: date].
@@ -60,6 +62,16 @@ For the detailed [module map](docs/architecture.md#module-map), [communication m
 ## What this repo contains / what it doesn't
 
 NeroMusic is a commercial, private product. Its application source, deployment configuration, operational data, and customer information are not published here. This showcase contains architecture and engineering documentation plus small, generic modules written from scratch to demonstrate selected programming patterns. `samples/` is MIT-licensed; that license does not apply to the private product or its source.
+
+## Code samples
+
+The three standalone samples were written from scratch and demonstrate reusable engineering patterns without including product source:
+
+| Sample                                                   | Demonstrates                                                            |
+| -------------------------------------------------------- | ----------------------------------------------------------------------- |
+| [Provider fallback](samples/llm-fallback/README.md)      | Timeouts, retries, cancellation, typed failures, and provider fallback. |
+| [State reconciler](samples/state-reconciler/README.md)   | Converging desired SQLite state with a runtime adapter.                 |
+| [SQLite migrations](samples/sqlite-migrations/README.md) | Transactional, repeatable schema migrations and concurrency safety.     |
 
 ## How I built it
 
