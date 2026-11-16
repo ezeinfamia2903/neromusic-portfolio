@@ -2,11 +2,29 @@ node_modules/
 coverage/
 .eslintcache
 .prettiercache
+
+# Local databases and logs
 *.sqlite
 *.sqlite-*
+*.sqlite3
+*.sqlite3-*
 *.db
 *.db-*
 *.log
+*.log.*
+logs/
+cache/
+
+# Local configuration and credentials
 .env
 .env.*
 !.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+
+# Operating-system files
+.DS_Store
+Thumbs.db
