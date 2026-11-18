@@ -1,5 +1,5 @@
 {
-  "name": "neromusic-showcase",
+  "name": "neromusic-portfolio",
   "version": "1.0.0",
   "private": true,
   "description": "Public engineering showcase and generic Node.js samples",
@@ -8,7 +8,7 @@
     "node": ">=20.19"
   },
   "scripts": {
-    "test": "node --test samples/**/*.test.js",
+    "test": "node --test",
     "demo": "node samples/llm-fallback/demo.js && node samples/state-reconciler/demo.js && node samples/sqlite-migrations/demo.js",
     "lint": "eslint samples",
     "typecheck": "tsc --project tsconfig.json",
