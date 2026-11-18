@@ -66,17 +66,41 @@ function createDesiredResourceStore(db) {
 }
 
 /**
- * Upsert one desired resource. A null expiration means that it does not expire.
+ * @typedef {{
+ *   id: string,
+ *   enabled?: boolean,
+ *   expiresAt?: number | null,
+ *   config?: Record<string, unknown>
+ * }} DesiredResourceInput
+ */
+
+/**
+ * Upsert one desired resource. Omitted fields keep their stored values on
+ * update and use the documented defaults on insert. A null expiration means
+ * that it does not expire.
  *
  * @param {import('better-sqlite3').Database} db
- * @param {{ id: string, enabled?: boolean, expiresAt?: number | null, config?: Record<string, unknown> }} resource
+ * @param {DesiredResourceInput} resource
  */
-function setDesiredResource(
-  db,
-  { id, enabled = true, expiresAt = null, config = {} },
-) {
+function setDesiredResource(db, resource) {
+  if (!resource || typeof resource !== 'object' || Array.isArray(resource)) {
+    throw new TypeError('resource must be an object');
+  }
+  const { id } = resource;
   if (typeof id !== 'string' || id.trim() === '') {
     throw new TypeError('resource id must be a non-empty string');
+  }
+
+  const hasEnabled = resource.enabled !== undefined;
+  const hasExpiresAt = resource.expiresAt !== undefined;
+  const hasConfig = resource.config !== undefined;
+
+  const enabled = hasEnabled ? resource.enabled : true;
+  const expiresAt = hasExpiresAt ? (resource.expiresAt ?? null) : null;
+  const config = hasConfig ? resource.config : {};
+
+  if (hasEnabled && typeof enabled !== 'boolean') {
+    throw new TypeError('enabled must be a boolean');
   }
   if (
     expiresAt !== null &&
@@ -93,11 +117,19 @@ function setDesiredResource(
     INSERT INTO desired_resources (id, enabled, expires_at, config)
     VALUES (?, ?, ?, ?)
     ON CONFLICT(id) DO UPDATE SET
-      enabled = excluded.enabled,
-      expires_at = excluded.expires_at,
-      config = excluded.config
+      enabled = CASE WHEN ? = 1 THEN excluded.enabled ELSE desired_resources.enabled END,
+      expires_at = CASE WHEN ? = 1 THEN excluded.expires_at ELSE desired_resources.expires_at END,
+      config = CASE WHEN ? = 1 THEN excluded.config ELSE desired_resources.config END
   `,
-  ).run(id.trim(), enabled ? 1 : 0, expiresAt, JSON.stringify(config));
+  ).run(
+    id.trim(),
+    enabled ? 1 : 0,
+    expiresAt,
+    JSON.stringify(config),
+    hasEnabled ? 1 : 0,
+    hasExpiresAt ? 1 : 0,
+    hasConfig ? 1 : 0,
+  );
 }
 
 /**

@@ -66,6 +66,45 @@ test('creates desired resources and updates changed configuration', async () => 
   }
 });
 
+test('preserves omitted fields during a partial update', () => {
+  const { db } = setup();
+  try {
+    setDesiredResource(db, {
+      id: 'partial',
+      config: { size: 2 },
+      expiresAt: 1_000,
+    });
+    setDesiredResource(db, { id: 'partial', enabled: false });
+
+    const partial =
+      /** @type {{ enabled: number, expires_at: number | null, config: string }} */ (
+        db
+          .prepare(
+            'SELECT enabled, expires_at, config FROM desired_resources WHERE id = ?',
+          )
+          .get('partial')
+      );
+    assert.equal(partial.enabled, 0);
+    assert.equal(partial.expires_at, 1_000);
+    assert.deepEqual(JSON.parse(partial.config), { size: 2 });
+
+    setDesiredResource(db, { id: 'defaults' });
+    const defaults =
+      /** @type {{ enabled: number, expires_at: number | null, config: string }} */ (
+        db
+          .prepare(
+            'SELECT enabled, expires_at, config FROM desired_resources WHERE id = ?',
+          )
+          .get('defaults')
+      );
+    assert.equal(defaults.enabled, 1);
+    assert.equal(defaults.expires_at, null);
+    assert.deepEqual(JSON.parse(defaults.config), {});
+  } finally {
+    db.close();
+  }
+});
+
 test('does not reapply equivalent nested configuration with different key order', async () => {
   const { db, adapter } = setup([
     { id: 'stable', config: { nested: { first: 1, second: 2 } } },

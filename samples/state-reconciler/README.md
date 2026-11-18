@@ -17,6 +17,7 @@ Initialize the desired-resource store and provide an adapter with `list`, `apply
 ## Design notes
 
 - SQLite is the durable source of desired state; the adapter represents independently managed runtime state.
+- Updates are partial: omitted `enabled`, `expiresAt`, or `config` values keep their stored values.
 - Repeating reconciliation safely retries work after partial failures and process restarts.
 - Per-resource failures are returned in the result, while unexpected cycle errors are exposed by the periodic runner.
 - The periodic runner prevents overlapping reconciliation cycles.
@@ -29,12 +30,13 @@ Initialize the desired-resource store and provide an adapter with `list`, `apply
 
 ## Tests and running
 
-The sample has **6 automated tests** covering creation, configuration changes, removal and expiration, retry exhaustion and recovery, periodic reconciliation, and input validation.
+The sample has **7 automated tests** covering creation, configuration changes, partial updates, removal and expiration, retry exhaustion and recovery, periodic reconciliation, and input validation.
 
-From the repository root, run the tests and demo with:
+From the repository root, install dependencies, run the tests, and run the demo with:
 
 ```sh
-node --test samples/state-reconciler/*.test.js
+npm ci
+node --test samples/state-reconciler/index.test.js
 node samples/state-reconciler/demo.js
 ```
 
