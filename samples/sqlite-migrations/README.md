@@ -32,10 +32,11 @@ Calling `applyMigrations` again safely returns an empty list when all registered
 
 The sample has **6 automated tests** covering idempotence, concurrent connections, WAL settings, rollback, duplicate versions, and unknown stored versions.
 
-From the repository root, run the tests and demo with:
+From the repository root, install dependencies, run the tests, and run the demo with:
 
 ```sh
-node --test samples/sqlite-migrations/*.test.js
+npm ci
+node --test samples/sqlite-migrations/index.test.js
 node samples/sqlite-migrations/demo.js
 ```
 

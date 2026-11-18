@@ -30,10 +30,11 @@ Provide adapters with unique names and an asynchronous `generate` method. Pass a
 
 The sample has **8 automated tests** covering fallback, retries, timeout, cancellation, provider errors, invalid configuration, and an empty provider list.
 
-From the repository root, run the tests and demo with:
+From the repository root, install dependencies, run the tests, and run the demo with:
 
 ```sh
-node --test samples/llm-fallback/*.test.js
+npm ci
+node --test samples/llm-fallback/index.test.js
 node samples/llm-fallback/demo.js
 ```
 
