@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/ezeinfamia2903/neromusic-portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/ezeinfamia2903/neromusic-portfolio/actions/workflows/ci.yml)
 
-Demo video: [DEMO_VIDEO_URL]
+Demo video: https://youtu.be/AgAS-J0-jnE
 
 NeroMusic is a private, multi-tenant music service for IMVU rooms, with per-room playback, administration, and optional bilingual conversation.
 
