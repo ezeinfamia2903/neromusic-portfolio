@@ -1,6 +1,12 @@
 # NeroMusic
 
-NeroMusic is a private, multi-tenant music service for IMVU rooms, with per-room playback, administration, and optional bilingual conversation. [![CI](https://github.com/COMPLETAR-GITHUB-HANDLE/neromusic-showcase/actions/workflows/ci.yml/badge.svg)](https://github.com/COMPLETAR-GITHUB-HANDLE/neromusic-showcase/actions/workflows/ci.yml) · [Demo video](<COMPLETAR: demo video URL>)
+[![CI](https://github.com/ezeinfamia2903/neromusic-portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/ezeinfamia2903/neromusic-portfolio/actions/workflows/ci.yml)
+
+Demo video: [DEMO_VIDEO_URL]
+
+NeroMusic is a private, multi-tenant music service for IMVU rooms, with per-room playback, administration, and optional bilingual conversation.
+
+Public showcase: architecture docs and generic samples with tests. The product source code is private.
 
 **Created by Ezequiel Núñez.** NeroMusic is an independent project and is not affiliated with, endorsed by, or sponsored by IMVU.
 
@@ -42,6 +48,16 @@ For the [functional module map](docs/module-map.md), [communication map](docs/ar
 - One Node.js codebase for Windows and Linux, with platform-aware paths for external tools.
 - Structured logs, an audio-service health check, and local streaming metrics.
 
+## Screenshots
+
+Product screenshots with user, room, and operational identifiers redacted.
+
+![Admin panel showing client and room controls](screenshots/admin-panel.png)
+
+![Room with the radio active and the bot present](screenshots/room-radio.png)
+
+![Chat request playing a track in a room](screenshots/room-playback.png)
+
 ## Engineering highlights
 
 - Modular CommonJS application with roughly 34 JavaScript application files.
@@ -55,9 +71,6 @@ For the [functional module map](docs/module-map.md), [communication map](docs/ar
 
 - NeroMusic runs 24/7 on an Ubuntu VPS and the same codebase also runs on Windows.
 - Deployment options documented for Ubuntu: `systemd` with either Caddy or Cloudflare Tunnel for public HTTPS audio access.
-- Concurrent rooms, customers, and users: [COMPLETAR: verified production counts].
-- Production start date: [COMPLETAR: date].
-- Measured availability or uptime: [COMPLETAR: measurement period and source].
 
 ## What this repo contains / what it doesn't
 
@@ -65,13 +78,17 @@ NeroMusic is a commercial, private product. Its application source, deployment c
 
 ## Code samples
 
-The three standalone samples were written from scratch and demonstrate reusable engineering patterns without including product source:
+The three standalone samples were written from scratch and demonstrate reusable engineering patterns without including product source. The current suite contains 21 automated tests:
 
 | Sample                                                   | Demonstrates                                                            |
 | -------------------------------------------------------- | ----------------------------------------------------------------------- |
 | [Provider fallback](samples/llm-fallback/README.md)      | Timeouts, retries, cancellation, typed failures, and provider fallback. |
 | [State reconciler](samples/state-reconciler/README.md)   | Converging desired SQLite state with a runtime adapter.                 |
 | [SQLite migrations](samples/sqlite-migrations/README.md) | Transactional, repeatable schema migrations and concurrency safety.     |
+
+## Quality tooling
+
+The samples are plain JavaScript with JSDoc annotations. `npm run typecheck` runs `tsc --strict` with `allowJs` and `checkJs`, so the JSDoc types are verified without emitting code or shipping TypeScript. ESLint and Prettier enforce style and formatting, and CI runs lint, type checking, formatting, tests, and a production dependency audit on Node.js 20.19 and 22. `tsconfig.json` exists only to configure that JSDoc-based type checking; it is not a TypeScript source tree. GitHub's language bar reports JavaScript because every committed sample file is `.js`, and `tsconfig.json` does not change that classification.
 
 ## How I built it
 
@@ -89,9 +106,3 @@ I developed NeroMusic with AI assistance under my direction. I conceived the pro
 | AI                      | Optional provider cascade with per-room configuration          |
 | Operations              | Ubuntu, `systemd`, Caddy or Cloudflare Tunnel; Windows support |
 | Showcase samples        | Node.js built-ins, `node:test`, and `better-sqlite3`           |
-
-## Contact
-
-- GitHub: [COMPLETAR: profile URL]
-- LinkedIn: [COMPLETAR: profile URL]
-- Email: [COMPLETAR: contact email]

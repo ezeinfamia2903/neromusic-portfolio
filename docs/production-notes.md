@@ -25,9 +25,3 @@ The audio service, operational metrics, and admin panel are separate runtime int
 ## Validation
 
 Validated through manual functional tests in real rooms; the automated tests in this repository cover the sample modules.
-
-## In production
-
-- Concurrent rooms, customers, and users: [COMPLETAR: verified counts and measurement window].
-- Production start date: [COMPLETAR: date].
-- Availability or uptime: [COMPLETAR: monitoring source and measurement window].

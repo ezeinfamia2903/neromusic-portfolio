@@ -1,6 +1,12 @@
 # NeroMusic
 
-NeroMusic es un servicio privado de música multi-cliente para salas de IMVU, con reproducción independiente por sala, administración e IA conversacional opcional bilingüe. [![CI](https://github.com/COMPLETAR-GITHUB-HANDLE/neromusic-showcase/actions/workflows/ci.yml/badge.svg)](https://github.com/COMPLETAR-GITHUB-HANDLE/neromusic-showcase/actions/workflows/ci.yml) · [Video de demostración](<COMPLETAR: URL del video>)
+[![CI](https://github.com/ezeinfamia2903/neromusic-portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/ezeinfamia2903/neromusic-portfolio/actions/workflows/ci.yml)
+
+Video de demostración: [DEMO_VIDEO_URL]
+
+NeroMusic es un servicio privado de música multi-cliente para salas de IMVU, con reproducción independiente por sala, administración e IA conversacional opcional bilingüe.
+
+Showcase público: documentación de arquitectura y muestras genéricas con tests. El código fuente del producto es privado.
 
 **Creado por Ezequiel Núñez.** NeroMusic es un proyecto independiente y no está afiliado, respaldado ni patrocinado por IMVU.
 
@@ -42,6 +48,16 @@ Para ver el [mapa funcional de módulos](docs/module-map.md), el [mapa de comuni
 - Una misma base de código Node.js para Windows y Linux, con resolución de rutas según las herramientas externas disponibles.
 - Logs estructurados, verificación de salud del servicio de audio y métricas locales de streaming.
 
+## Capturas
+
+Capturas del producto con identificadores de usuarios, salas y operación redactados.
+
+![Panel de administración con controles de clientes y salas](screenshots/admin-panel.png)
+
+![Sala con la radio activa y el bot presente](screenshots/room-radio.png)
+
+![Pedido por chat reproduciendo una pista en una sala](screenshots/room-playback.png)
+
 ## Aspectos destacados de ingeniería
 
 - Aplicación modular CommonJS con aproximadamente 34 archivos JavaScript de aplicación.
@@ -55,9 +71,6 @@ Para ver el [mapa funcional de módulos](docs/module-map.md), el [mapa de comuni
 
 - NeroMusic corre 24/7 en un VPS Ubuntu y la misma base de código también corre en Windows.
 - Opciones de despliegue documentadas para Ubuntu: `systemd` con Caddy o Cloudflare Tunnel para publicar el acceso HTTPS al audio.
-- Salas, clientes y usuarios simultáneos: [COMPLETAR: cantidades de producción verificadas].
-- Fecha de inicio en producción: [COMPLETAR: fecha].
-- Disponibilidad o uptime medido: [COMPLETAR: período y fuente de la medición].
 
 ## Qué contiene y qué no contiene este repositorio
 
@@ -65,13 +78,17 @@ NeroMusic es un producto comercial privado. Aquí no se publica el código de la
 
 ## Muestras de código
 
-Las tres muestras independientes se escribieron desde cero y muestran patrones de ingeniería reutilizables sin incluir código del producto:
+Las tres muestras independientes se escribieron desde cero y muestran patrones de ingeniería reutilizables sin incluir código del producto. La suite actual contiene 21 tests automatizados:
 
 | Muestra                                                       | Qué demuestra                                                        |
 | ------------------------------------------------------------- | -------------------------------------------------------------------- |
 | [Fallback de proveedores](samples/llm-fallback/README.md)     | Timeouts, reintentos, cancelación, errores tipados y fallback.       |
 | [Reconciliador de estado](samples/state-reconciler/README.md) | Convergencia entre estado deseado en SQLite y un adaptador runtime.  |
 | [Migraciones SQLite](samples/sqlite-migrations/README.md)     | Migraciones transaccionales, repetibles y seguras ante concurrencia. |
+
+## Herramientas de calidad
+
+Las muestras son JavaScript plano con anotaciones JSDoc. `npm run typecheck` ejecuta `tsc --strict` con `allowJs` y `checkJs`, de modo que los tipos de JSDoc se verifican sin emitir código ni distribuir TypeScript. ESLint y Prettier aplican estilo y formato, y la CI ejecuta lint, chequeo de tipos, formato, tests y auditoría de dependencias de producción en Node.js 20.19 y 22. `tsconfig.json` existe solo para configurar ese chequeo de tipos basado en JSDoc; no es un árbol de fuentes TypeScript. La barra de lenguajes de GitHub informa JavaScript porque todos los archivos de muestra versionados son `.js`, y `tsconfig.json` no cambia esa clasificación.
 
 ## Cómo lo desarrollé
 
@@ -89,9 +106,3 @@ Desarrollé NeroMusic con asistencia de IA bajo mi dirección. Concebí el produ
 | IA                          | Cascada opcional de proveedores con configuración por sala         |
 | Operación                   | Ubuntu, `systemd`, Caddy o Cloudflare Tunnel; soporte para Windows |
 | Samples del showcase        | Módulos nativos de Node.js, `node:test` y `better-sqlite3`         |
-
-## Contacto
-
-- GitHub: [COMPLETAR: URL del perfil]
-- LinkedIn: [COMPLETAR: URL del perfil]
-- Email: [COMPLETAR: correo de contacto]
